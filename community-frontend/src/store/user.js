@@ -1,0 +1,40 @@
+﻿import { defineStore } from 'pinia'
+
+export const useUserStore = defineStore('user', {
+  state: () => ({
+    token: localStorage.getItem('token') || '',
+    userId: Number(localStorage.getItem('userId')) || null,
+    role: localStorage.getItem('role') || '',
+    username: localStorage.getItem('username') || ''
+  }),
+  getters: {
+    isLogin: (s) => !!s.token,
+    isAdmin: (s) => s.role === 'ADMIN',
+    isLeader: (s) => s.role === 'LEADER',
+    isSupplier: (s) => s.role === 'SUPPLIER',
+    isUser: (s) => s.role === 'USER'
+  },
+  actions: {
+    setLogin({ token, userId, role, username }) {
+      if (!token) throw new Error('登录失败：令牌无效')
+      this.token = token
+      this.userId = userId ?? null
+      this.role = role || 'USER'
+      this.username = username || ''
+      localStorage.setItem('token', this.token)
+      localStorage.setItem('userId', String(this.userId ?? ''))
+      localStorage.setItem('role', this.role)
+      if (this.username) localStorage.setItem('username', this.username)
+    },
+    logout() {
+      this.token = ''
+      this.userId = null
+      this.role = ''
+      this.username = ''
+      localStorage.removeItem('token')
+      localStorage.removeItem('userId')
+      localStorage.removeItem('role')
+      localStorage.removeItem('username')
+    }
+  }
+})

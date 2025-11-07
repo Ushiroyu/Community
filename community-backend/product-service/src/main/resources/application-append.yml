@@ -1,0 +1,15 @@
+# ⬇ 将本片段合并进你的 product-service 的 application.yml（或对应 profile yml）
+mq:
+  order:
+    exchange: orderExchange
+    routing:
+      timeout: order.timeout
+    queue:
+      timeout: orderTimeoutQueue
+
+spring:
+  rabbitmq:
+    listener:
+      simple:
+        # 如果监听器启动时队列暂不存在，不要把应用拉挂
+        missing-queues-fatal: false

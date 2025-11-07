@@ -1,0 +1,19 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: community-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  redis:
+    image: redis:7
+    container_name: community-redis
+    ports:
+      - "6379:6379"
+
+  adminer:
+    image: adminer
+    container_name: community-adminer
+    ports:
+      - "8088:8080"

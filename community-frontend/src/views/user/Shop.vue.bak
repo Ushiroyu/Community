@@ -1,0 +1,55 @@
+<template>
+  <div>
+    <div style="display:flex; gap:12px; margin-bottom:12px; align-items:center;">
+      <el-input v-model="keyword" placeholder="搜商�? clearable style="max-width:260px" @keyup.enter="load"/>
+      <el-select v-model="categoryId" clearable placeholder="分类" style="width:180px" @change="onFilter">
+        <el-option v-for="c in categories" :key="c.id" :label="c.name" :value="c.id" />
+      </el-select>
+      <el-button type="primary" @click="load">搜索</el-button>
+    </div>
+    <el-row :gutter="12">
+      <el-col v-for="p in list" :key="p.id" :xs="12" :sm="8" :md="6" :lg="4">
+        <el-card style="margin-bottom:12px; cursor:pointer;" @click="$router.push('/products/'+p.id)">
+          <div class="title">{{ p.name }}</div>
+          <div class="price">¥ {{ p.price }}</div>
+          <div class="meta">库存：{{ p.stock ?? 0 }}</div>
+        </el-card>
+      </el-col>
+    </el-row>
+    <el-empty v-if="!list.length" description="暂无商品，请先在后端添加或检查分页参�? />
+    <div style="margin-top:8px; text-align:right;">
+      <el-pagination :total="total" v-model:current-page="page" v-model:page-size="size"
+        layout="prev, pager, next, jumper" @current-change="load" @size-change="load"/>
+    </div>
+  </div>
+</template>
+<script setup>
+import { ref, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
+import { listCategories, pageProducts } from '@/api/products'
+const keyword = ref(''); const categoryId = ref(null)
+const categories = ref([])
+const page = ref(1); const size = ref(12); const total = ref(0); const list = ref([])
+const load = async () => {
+  const params = { page: page.value, size: size.value, keyword: keyword.value || undefined, categoryId: categoryId.value || undefined }
+  try {
+    const res = await pageProducts(params)
+    if(res.code===0 || res.success===true || res.status===200){
+      const d = res.data || res
+      list.value = d.list || d.records || d.rows || d.items || []
+      total.value = d.total ?? d.totalCount ?? d.count ?? list.value.length
+    } else { ElMessage.error(res.msg || res.message || '加载失败') }
+  } catch(e){ ElMessage.error(e.message) }
+}
+const onFilter = () => { page.value = 1; load() }
+onMounted(async ()=>{
+  try { const r = await listCategories(); categories.value = r.data?.categories || r.categories || r.data || [] } catch{}
+  await load()
+})
+</script>
+<style scoped>
+.title { font-weight: 600; margin-bottom: 6px; }
+.price { color: #f56c6c; font-weight: 700; }
+.meta { color: #999; font-size: 12px; }
+</style>
+

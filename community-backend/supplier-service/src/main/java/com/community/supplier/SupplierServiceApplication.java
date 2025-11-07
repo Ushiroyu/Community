@@ -1,0 +1,14 @@
+package com.community.supplier;
+
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication(scanBasePackages = {"com.community"})
+@MapperScan("com.community.supplier.mapper")
+public class SupplierServiceApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(SupplierServiceApplication.class, args);
+    }
+}

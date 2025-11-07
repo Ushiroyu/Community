@@ -1,0 +1,1 @@
+import{h as t}from"./http-y0YsLSxU.js";const s=(e={})=>{const r={page:e.page??e.current??1,size:e.size??e.pageSize??e.limit??12,keyword:e.keyword||void 0,categoryId:e.categoryId||void 0,approved:e.approved};return t.get("/products",{params:r})},a=()=>t.get("/categories"),d=e=>t.get(`/products/${e}`);export{d as g,a as l,s as p};

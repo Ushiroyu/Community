@@ -1,0 +1,9 @@
+# 将以下内容合并进 product-service/src/main/resources/application.yml
+# 目的是：当队列暂时不存在时不让监听器启动失败（等待 order-service 创建队列）
+spring:
+  rabbitmq:
+    listener:
+      simple:
+        missing-queues-fatal: false
+      direct:
+        missing-queues-fatal: false

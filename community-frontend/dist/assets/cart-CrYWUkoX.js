@@ -1,0 +1,1 @@
+import{h as t}from"./http-y0YsLSxU.js";const e=a=>t.get("/cart",{params:{userId:a}}),c=e,m=(a,r,s=1)=>t.post("/cart",null,{params:{userId:a,productId:r,quantity:s}}),p=(a,r)=>t.delete(`/cart/${r}`,{params:{userId:a}}),l=a=>t.delete("/cart",{params:{userId:a}});export{m as a,l as c,c as l,p as r};

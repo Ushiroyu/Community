@@ -1,0 +1,11 @@
+import http from './http'
+export const getUserById=(id)=>http.get(`/users/${id}`)
+export const updateUserById=(id,p)=>http.put(`/users/${id}`,p)
+export const resetPassword=(id,password)=>http.put(`/users/${id}/password`,{ password })
+export const listUsers=(params={})=>http.get('/users',{ params })
+export const listAddresses=(uid)=>http.get(`/users/${uid}/addresses`)
+export const getAddress=(uid,aid)=>http.get(`/users/${uid}/addresses/${aid}`)
+export const addAddress=(uid,p)=>http.post(`/users/${uid}/addresses`,p)
+export const updateAddress=(uid,aid,p)=>http.put(`/users/${uid}/addresses/${aid}`,p)
+export const deleteAddress=(uid,aid)=>http.delete(`/users/${uid}/addresses/${aid}`)
+export const setDefaultAddress=(uid,aid)=>http.put(`/users/${uid}/addresses/${aid}/default`)

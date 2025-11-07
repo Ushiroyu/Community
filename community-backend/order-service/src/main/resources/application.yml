@@ -1,0 +1,63 @@
+server:
+  port: 8083
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: order-service
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:community}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Taipei&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      database: ${REDIS_DB:0}
+  jackson:
+    time-zone: Asia/Taipei
+    serialization:
+      write-dates-as-timestamps: false
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASS:guest}
+    listener:
+      simple:
+        acknowledge-mode: auto
+        prefetch: 10
+        concurrency: 1
+        max-concurrency: 4
+  cloud:
+    discovery:
+      enabled: ${DISCOVERY_ENABLED:false}
+
+# 事件交换机名称与路由键（供代码中引用）
+app:
+  mq:
+    event-exchange: event.bus.ex
+    order-routing-key: order.*
+
+springdoc:
+  api-docs.enabled: true
+  swagger-ui.enabled: true
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto
+  mapper-locations: classpath*:/mapper/**/*.xml
+
+management:
+  endpoints.web.exposure.include: health,info
+logging:
+  level:
+    root: INFO
+    com.community: INFO

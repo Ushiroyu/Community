@@ -1,0 +1,1 @@
+import{h as a}from"./http-y0YsLSxU.js";const n=(e,s,t)=>a.post("/leaders/apply",null,{params:{userId:e,communityName:s,communityAddr:t}}),o=()=>a.get("/leaders/pending"),r=e=>a.get(`/communities/${e}`);export{n as a,r as g,o as p};

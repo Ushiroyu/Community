@@ -1,0 +1,1 @@
+import{h as e}from"./http-y0YsLSxU.js";const d=r=>e.post("/orders/create",null,{params:r}),c=r=>e.post(`/orders/${r}/pay`),p=r=>e.post(`/orders/${r}/confirm`),m=()=>e.get("/orders/me"),n=(r,{status:s,page:o=1,size:t=10}={})=>e.get("/orders/by-leader",{params:{leaderId:r,status:s,page:o,size:t}});export{p as a,d as c,n as l,m,c as p};
