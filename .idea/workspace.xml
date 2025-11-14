@@ -6,12 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="a0c1ee9b-57a0-49f9-aa6b-d10d7bb42677" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/community-backend/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/community-backend/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/community-backend/docs/RabbitConfig_Qualifier_Sample.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/community-backend/gateway-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/community-backend/gateway-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/community-backend/gateway-service/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/community-backend/gateway-service/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/community_schema_mysql.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/community-backend/docs/api/swagger.html" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -247,7 +242,7 @@
       <workItem from="1762419718973" duration="210000" />
       <workItem from="1762420557365" duration="2944000" />
       <workItem from="1762511172685" duration="2701000" />
-      <workItem from="1763091748922" duration="16144000" />
+      <workItem from="1763091748922" duration="18006000" />
     </task>
     <servers />
   </component>
