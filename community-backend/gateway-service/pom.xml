@@ -37,6 +37,13 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <!-- 聚合 Swagger UI，统一查看各微服务的 OpenAPI -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+            <version>${springdoc.version}</version>
+        </dependency>
+
         <!-- 建议：生产使用 Caffeine 作为 LoadBalancer 缓存 -->
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>

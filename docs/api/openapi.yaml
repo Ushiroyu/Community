@@ -1,0 +1,232 @@
+﻿openapi: 3.0.3
+info:
+  title: Community Backend Gateway API
+  version: 1.0.0
+  description: >-
+    精简版 OpenAPI 规范，覆盖居民下单主链路。通过网关（Spring Cloud Gateway）
+    暴露的路径与实际微服务一一映射，可结合 Swagger UI / Postman 进一步调试。
+servers:
+  - url: http://localhost:8080
+    description: 本地 Gateway Server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: 0 表示成功
+        message:
+          type: string
+        data:
+          type: object
+      required:
+        - code
+        - message
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required: [username, password]
+    LoginResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                token:
+                  type: string
+                userId:
+                  type: integer
+                  format: int64
+                role:
+                  type: string
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        price:
+          type: number
+          format: double
+        stock:
+          type: integer
+        categoryId:
+          type: integer
+          format: int64
+        supplierId:
+          type: integer
+          format: int64
+paths:
+  /users/login:
+    post:
+      tags: [Users]
+      summary: 用户登录
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: 登录成功/失败包装
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+  /products:
+    get:
+      tags: [Products]
+      summary: 商品分页查询
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: size
+          schema:
+            type: integer
+            default: 10
+        - in: query
+          name: keyword
+          schema:
+            type: string
+        - in: query
+          name: categoryId
+          schema:
+            type: integer
+        - in: query
+          name: approved
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: 商品列表
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /cart:
+    get:
+      tags: [Cart]
+      summary: 查看购物车
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 返回购物车条目
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    post:
+      tags: [Cart]
+      summary: 加入购物车
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: productId
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: quantity
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 操作结果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /orders/create:
+    post:
+      tags: [Orders]
+      summary: 创建订单（简化版单商品）
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: leaderId
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: productId
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: quantity
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: addressId
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 订单创建结果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /admin/stats/overview:
+    get:
+      tags: [Admin]
+      summary: 统计总览
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: from
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: to
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: 指标数据
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'

@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: ${PORT:8080}
   forward-headers-strategy: framework
 
 spring:
@@ -116,3 +116,24 @@ logging:
     root: INFO
     org.springframework.cloud.gateway: INFO
     reactor.netty: WARN
+
+# Swagger UI 聚合配置：通过网关统一查看各微服务 API
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    disable-swagger-default-url: true
+    display-request-duration: true
+    urls:
+      - name: user-service
+        url: /users/v3/api-docs
+      - name: product-service
+        url: /products/v3/api-docs
+      - name: order-service
+        url: /orders/v3/api-docs
+      - name: leader-service
+        url: /leaders/v3/api-docs
+      - name: supplier-service
+        url: /suppliers/v3/api-docs
+      - name: admin-service
+        url: /admin/v3/api-docs

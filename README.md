@@ -11,13 +11,67 @@
 ## 仓库结构
 | 路径 | 说明 |
 | --- | --- |
-| `community-backend/` | Spring Boot + Spring Cloud 多模块后端（用户、商品、订单、团长、供应商、管理后台、网关、公共模块）。详见该目录下新的 `README.md`。 |
-| `community-frontend/` | Vue 3 + Vite + Pinia + Element Plus 的多角色前端。详见该目录下新的 `README.md`。 |
-| `community_schema_mysql.sql` | 完整 MySQL DDL + 演示数据，覆盖用户/社区/订单/RBAC/Outbox 等表。 |
+| `community-backend/` | Spring Boot + Spring Cloud 多模块后端（用户、商品、订单、团长、供应商、管理后台、网关、公共模块），详见该目录下新的 `README.md`。 |
+| `community-frontend/` | Vue 3 + Vite + Pinia + Element Plus 的多角色前端，详见该目录下新的 `README.md`。 |
+| `init.sql` | 数据库初始化脚本，已合并 `community-backend/database/schema.sql` 与 `data.sql`，一次执行即可完成建表与演示数据导入。 |
 | `docker-compose.yml` | 快速启动 Redis、RabbitMQ、Adminer（可视化管理 MySQL）的最小依赖。 |
+| `postman_collection.json` | 通过网关访问的核心 API Postman 集合副本，便于直接导入调试（原始文件位于 `community-backend/docs/postman/`）。 |
+| `docs/api/openapi.yaml` | 精简 OpenAPI 3.0 规范，覆盖登录、商品、购物车、订单、统计等关键接口。 |
 | `start.cmd` | Windows 快捷启动脚本，可串联常用服务。 |
+| `docs/delivery-checklist.md` | 「四步提交流程」的执行记录。 |
 
-## 核心能力概览
+## 一键启动 / 快速体验
+1. 在仓库根目录执行 `docker-compose up -d`，一次拉起 MySQL 依赖（Adminer 可选，用于可视化管理）。
+2. 运行 `init.sql`（或分别执行 `community-backend/database/schema.sql` + `data.sql`）初始化数据库。
+3. 进入 `community-backend` 执行 `./mvnw spring-boot:run -pl gateway-service -am`，即可将各后端模块连同网关拉起。
+4. 进入 `community-frontend` 执行 `npm install && npm run dev`，通过 `http://localhost:5173` 访问前端，默认代理网关 `http://localhost:8080`。
+5. 调试 API 时，可打开 `http://localhost:8080/swagger-ui/index.html` 查看聚合文档，或导入 `postman_collection.json` 直接调用。
+
+## 架构图
+```mermaid
+flowchart LR
+    subgraph Client
+        FE[community-frontend]
+    end
+    subgraph Backend
+        GW[Gateway Service]
+        USER[User Service]
+        PRODUCT[Product Service]
+        ORDER[Order Service]
+        LEADER[Leader Service]
+        SUPPLIER[Supplier Service]
+        ADMIN[Admin Service]
+        COMMON[Common Service]
+    end
+    subgraph Infra
+        MYSQL[(MySQL)]
+        REDIS[(Redis)]
+        RABBIT[(RabbitMQ)]
+    end
+    FE <--> GW
+    GW --> USER
+    GW --> PRODUCT
+    GW --> ORDER
+    GW --> LEADER
+    GW --> SUPPLIER
+    GW --> ADMIN
+    USER --> MYSQL
+    PRODUCT --> MYSQL
+    ORDER --> MYSQL
+    LEADER --> MYSQL
+    SUPPLIER --> MYSQL
+    ADMIN --> MYSQL
+    PRODUCT --> REDIS
+    ORDER --> REDIS
+    ORDER --> RABBIT
+    SUPPLIER --> RABBIT
+```
+## API 文档
+- **运行态 Swagger UI**：各微服务暴露 `http://localhost:<port>/swagger-ui/index.html`（交互 UI）与 `http://localhost:<port>/v3/api-docs`（JSON/YAML 规格）。网关聚合入口 `http://localhost:8080/swagger-ui/index.html` 可在单页切换 user/product/order/leader/supplier/admin 六个服务的 OpenAPI。
+- **静态托管**：`docs/api/openapi.yaml` + `docs/api/swagger.html`。将 GitHub Pages 指向 `/docs` 后，即可在 `https://<your-account>.github.io/Community/api/swagger.html` 对外展示；本地可 `npx serve docs/api` 预览。
+- **官方参考**：项目使用 [springdoc-openapi](https://springdoc.org/)（OpenAPI 3 Library for Spring Boot），更多配置示例见其 [GitHub 仓库](https://github.com/springdoc/springdoc-openapi)。
+
+## 功能点
 - **用户模块**：注册/登录、个人信息维护、地址管理与默认地址缓存（Redis），JWT 单点登录 + RBAC 权限校验。
 - **团长模块**：团长申请与审批、社区档案、地理位置匹配、订单统计、团长看板。
 - **商品模块**：分类管理、全量/全文搜索、供应商上架、审核流、Redis + Lua 的秒级库存预占与同步。
@@ -45,7 +99,7 @@
 ## 运行快速指引
 1. **准备依赖**：JDK 21、Node.js 18+、Maven 3.9+、npm/pnpm、Docker（可选）。
 2. **启动基础设施**（可选）：在仓库根目录执行 `docker-compose up -d`，获得 Redis、RabbitMQ、Adminer。
-3. **导入数据库**：将 `community_schema_mysql.sql` 导入 MySQL，并创建与 `application.yml` 一致的账号/密码。
+3. **导入数据库**：将 `init.sql` 导入 MySQL，并创建与 `application.yml` 一致的账号/密码。
 4. **配置环境变量**（示例）：
    - `MYSQL_HOST`, `MYSQL_PORT`, `MYSQL_USER`, `MYSQL_PASSWORD`
    - `REDIS_HOST`, `RABBITMQ_HOST`
@@ -86,5 +140,6 @@
 ## 深入阅读
 - `community-backend/README.md`：微服务模块、表结构、调用链、调试方式的详细说明。
 - `community-frontend/README.md`：页面结构、状态流、API 约定、无障碍与可配置项。
+- `docs/delivery-checklist.md`：四步提交流程的执行记录（当前已落实 Step 1：GitHub 仓库链接）。
 
 如需扩展或上线，请先阅读上述子 README，以便了解环境变量、测试策略与部署建议。

@@ -47,6 +47,10 @@ Spring Boot + Spring Cloud 的社区团购后端，多模块涵盖用户、商�
 5. **调试入口**：每个服务暴露 `http://localhost:<port>/swagger-ui/index.html` 与 `http://localhost:<port>/v3/api-docs`；`common-service` 还提供 `/internal/metrics/basic` 的内存计数器快照。
 6. **网关联调**：启动 `gateway-service`（8080）后，前端将 `VITE_GATEWAY` 指向 `http://localhost:8080`，所有 API 经网关转发并统一附带 `X-Trace-Id`。
 
+## API 文档 & Postman
+- **集中 Swagger UI**：网关已引入 `springdoc-openapi`，在本地启动 `gateway-service` 后访问 `http://localhost:8080/swagger-ui/index.html`，可在同一页面切换 `user-service`、`product-service`、`order-service`、`leader-service`、`supplier-service`、`admin-service` 的 OpenAPI 文档。
+- **Postman 集合**：`docs/postman/community-backend.postman_collection.json` 覆盖核心链路（注册/登录、商品检索、购物车与下单、团长/供应商/统计接口）。配套环境变量文件位于 `docs/postman/community-backend.local.postman_environment.json`，导入后仅需填入 `auth_token` 即可连通受保护接口。
+
 ---
 
 ## 核心业务流程

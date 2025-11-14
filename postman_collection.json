@@ -1,0 +1,482 @@
+{
+  "info": {
+    "_postman_id": "7fa0f4ee-4ec1-4cd1-9d23-6a85f203fb62",
+    "name": "Community Backend (Gateway)",
+    "description": "统一通过 Spring Cloud Gateway (`{{gateway_base_url}}`) 访问社区团购后端的核心 API 示例。请求体/参数可根据实际测试环境调整。",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "gateway_base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "leader_id",
+      "value": "11",
+      "type": "string"
+    },
+    {
+      "key": "address_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "product_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "supplier_id",
+      "value": "21",
+      "type": "string"
+    },
+    {
+      "key": "demo_username",
+      "value": "user001",
+      "type": "string"
+    },
+    {
+      "key": "demo_password",
+      "value": "password",
+      "type": "string"
+    },
+    {
+      "key": "order_id",
+      "value": "1001",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Users & Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{gateway_base_url}}/users/register",
+              "host": [
+                "{{gateway_base_url}}"
+              ],
+              "path": [
+                "users",
+                "register"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"user999\",\n  \"password\": \"password\",\n  \"nickname\": \"演示用户\",\n  \"phone\": \"0900-000-000\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{gateway_base_url}}/users/login",
+              "host": [
+                "{{gateway_base_url}}"
+              ],
+              "path": [
+                "users",
+                "login"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{demo_username}}\",\n  \"password\": \"{{demo_password}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{gateway_base_url}}/users/{{user_id}}",
+              "host": [
+                "{{gateway_base_url}}"
+              ],
+              "path": [
+                "users",
+                "{{user_id}}"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "List Categories",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{gateway_base_url}}/categories",
+              "host": [
+                "{{gateway_base_url}}"
+              ],
+              "path": [
+                "categories"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{gateway_base_url}}/products/search?q=苹果&page=1&size=10",
+              "host": [
+                "{{gateway_base_url}}"
+              ],
+              "path": [
+                "products",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "苹果"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Product Detail",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{gateway_base_url}}/products/{{product_id}}",
+              "host": [
+                "{{gateway_base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{product_id}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cart & Orders",
+      "item": [
+        {
+          "name": "Add To Cart",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{gateway_base_url}}/cart?userId={{user_id}}&productId={{product_id}}&quantity=1",
+              "host": [
+                "{{gateway_base_url}}"
+              ],
+              "path": [
+                "cart"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "{{user_id}}"
+                },
+                {
+                  "key": "productId",
+                  "value": "{{product_id}}"
+                },
+                {
+                  "key": "quantity",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "View Cart",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{gateway_base_url}}/cart?userId={{user_id}}",
+              "host": [
+                "{{gateway_base_url}}"
+              ],
+              "path": [
+                "cart"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "{{user_id}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{gateway_base_url}}/orders/create?userId={{user_id}}&leaderId={{leader_id}}&productId={{product_id}}&quantity=1&addressId={{address_id}}",
+              "host": [
+                "{{gateway_base_url}}"
+              ],
+              "path": [
+                "orders",
+                "create"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "{{user_id}}"
+                },
+                {
+                  "key": "leaderId",
+                  "value": "{{leader_id}}"
+                },
+                {
+                  "key": "productId",
+                  "value": "{{product_id}}"
+                },
+                {
+                  "key": "quantity",
+                  "value": "1"
+                },
+                {
+                  "key": "addressId",
+                  "value": "{{address_id}}"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Confirm Order",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{gateway_base_url}}/orders/{{order_id}}/confirm",
+              "host": [
+                "{{gateway_base_url}}"
+              ],
+              "path": [
+                "orders",
+                "{{order_id}}",
+                "confirm"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Leaders & Communities",
+      "item": [
+        {
+          "name": "Nearby Communities",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{gateway_base_url}}/communities/nearby?lat=25.03&lng=121.51&limit=5",
+              "host": [
+                "{{gateway_base_url}}"
+              ],
+              "path": [
+                "communities",
+                "nearby"
+              ],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "25.03"
+                },
+                {
+                  "key": "lng",
+                  "value": "121.51"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Apply Leader",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{gateway_base_url}}/leaders/apply?userId={{user_id}}&communityName=演示社区&communityAddr=台北市示例路1号",
+              "host": [
+                "{{gateway_base_url}}"
+              ],
+              "path": [
+                "leaders",
+                "apply"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "{{user_id}}"
+                },
+                {
+                  "key": "communityName",
+                  "value": "演示社区"
+                },
+                {
+                  "key": "communityAddr",
+                  "value": "台北市示例路1号"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Suppliers & Shipping",
+      "item": [
+        {
+          "name": "Supplier Pending List",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{gateway_base_url}}/suppliers/pending",
+              "host": [
+                "{{gateway_base_url}}"
+              ],
+              "path": [
+                "suppliers",
+                "pending"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Pending Shipments",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{gateway_base_url}}/shipping/pending/{{supplier_id}}",
+              "host": [
+                "{{gateway_base_url}}"
+              ],
+              "path": [
+                "shipping",
+                "pending",
+                "{{supplier_id}}"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin & Stats",
+      "item": [
+        {
+          "name": "Overview Stats",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{gateway_base_url}}/admin/stats/overview?from=2024-01-01&to=2024-01-31",
+              "host": [
+                "{{gateway_base_url}}"
+              ],
+              "path": [
+                "admin",
+                "stats",
+                "overview"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2024-01-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2024-01-31"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
