@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="a0c1ee9b-57a0-49f9-aa6b-d10d7bb42677" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/community-backend/docs/api/swagger.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/community-backend/.gitignore" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,46 +38,46 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Batch.Gateway-Start.executor": "Run",
-    "Batch.start.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Spring Boot.AdminServiceApplication.executor": "Run",
-    "Spring Boot.CommonServiceApplication.executor": "Run",
-    "Spring Boot.GatewayServiceApplication.executor": "Run",
-    "Spring Boot.LeaderServiceApplication.executor": "Run",
-    "Spring Boot.OrderServiceApplication.executor": "Run",
-    "Spring Boot.ProductServiceApplication.executor": "Run",
-    "Spring Boot.SupplierServiceApplication.executor": "Run",
-    "Spring Boot.UserServiceApplication.executor": "Run",
-    "git-widget-placeholder": "main",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/MECHREVO/community",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "模块",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "run.configurations.included.in.services": "true",
-    "settings.editor.selected.configurable": "trusted.hosts",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Batch.Gateway-Start.executor&quot;: &quot;Run&quot;,
+    &quot;Batch.start.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Spring Boot.AdminServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.CommonServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.GatewayServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.LeaderServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.OrderServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.ProductServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.SupplierServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.UserServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/MECHREVO/community&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;模块&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;trusted.hosts&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunDashboard">
     <option name="configurationTypes">
       <set>
@@ -243,6 +243,7 @@
       <workItem from="1762420557365" duration="2944000" />
       <workItem from="1762511172685" duration="2701000" />
       <workItem from="1763091748922" duration="18006000" />
+      <workItem from="1763537637661" duration="4913000" />
     </task>
     <servers />
   </component>

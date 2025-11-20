@@ -1,0 +1,21 @@
+﻿# Java / Spring Boot
+**/target/
+**/.idea/
+*.iml
+*.log
+!.mvn/wrapper/maven-wrapper.jar
+
+# Frontend / Node
+**/node_modules/
+**/dist/
+**/.vscode/
+.vite/
+*.local
+.env*
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# OS / Tools
+.DS_Store
+Thumbs.db
