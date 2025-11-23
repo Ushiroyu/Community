@@ -1,4 +1,4 @@
-﻿package com.community.user.controller;
+package com.community.user.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -28,17 +28,17 @@ public class UserController {
     @PostMapping("/register")
     public ApiResponse register(@RequestBody UserRegisterDTO dto) {
         boolean ok = userService.register(dto);
-        return ok ? ApiResponse.ok("Register success") : ApiResponse.error("Username already exists");
+        return ok ? ApiResponse.ok("注册成功") : ApiResponse.error("用户名已存在");
     }
 
     @PostMapping("/login")
     public ApiResponse login(@RequestBody LoginDTO dto) {
         User db = userService.login(dto);
         if (db == null) {
-            return ApiResponse.error("Invalid username or password");
+            return ApiResponse.error("用户名或密码错误");
         }
         String token = JwtUtil.generateToken(db.getId(), db.getRole());
-        return ApiResponse.ok("Login success")
+        return ApiResponse.ok("登录成功")
                 .data("token", token)
                 .data("userId", db.getId())
                 .data("role", db.getRole());
@@ -48,10 +48,9 @@ public class UserController {
     @PreAuthorize("#id.toString() == authentication.name or hasRole('ADMIN')")
     public ApiResponse getById(@PathVariable Long id) {
         User user = userService.getById(id);
-        if (user == null) {
-            return ApiResponse.error("User not found");
-        }
-        return ApiResponse.ok().data("user", user);
+        return user != null
+                ? ApiResponse.ok().data("user", user)
+                : ApiResponse.error("用户不存在");
     }
 
     @PutMapping("/{id}")
@@ -59,7 +58,7 @@ public class UserController {
     public ApiResponse update(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO dto) {
         User u = userService.getById(id);
         if (u == null) {
-            return ApiResponse.error("User not found");
+            return ApiResponse.error("用户不存在");
         }
         boolean changed = false;
         if (dto.nickname() != null) {
@@ -81,7 +80,7 @@ public class UserController {
         if (changed) {
             userService.updateById(u);
         }
-        return ApiResponse.ok("Profile updated").data("user", u);
+        return ApiResponse.ok("资料已更新").data("user", u);
     }
 
     @PutMapping("/{id}/role")
@@ -89,11 +88,11 @@ public class UserController {
     public ApiResponse setRole(@PathVariable Long id, @RequestParam String role) {
         User u = userService.getById(id);
         if (u == null) {
-            return ApiResponse.error("User not found");
+            return ApiResponse.error("用户不存在");
         }
         u.setRole(role == null ? "" : role.toUpperCase());
         userService.updateById(u);
-        return ApiResponse.ok("Role updated");
+        return ApiResponse.ok("角色已更新");
     }
 
     @PutMapping("/{id}/password")
@@ -107,15 +106,15 @@ public class UserController {
             }
         }
         if (newPassword == null || newPassword.isBlank()) {
-            return ApiResponse.error("Password cannot be blank");
+            return ApiResponse.error("新密码不能为空");
         }
         User u = userService.getById(id);
         if (u == null) {
-            return ApiResponse.error("User not found");
+            return ApiResponse.error("用户不存在");
         }
         u.setPassword(passwordEncoder.encode(newPassword));
         userService.updateById(u);
-        return ApiResponse.ok("Password reset");
+        return ApiResponse.ok("密码已重置");
     }
 
     @GetMapping
