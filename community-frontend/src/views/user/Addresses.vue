@@ -1,14 +1,18 @@
 <template>
   <div class="page-wrap addresses-view">
-    <section class="page-card addresses-hero" aria-labelledby="addresses-hero-title" aria-describedby="addresses-hero-desc">
+    <section
+      class="page-card addresses-hero"
+      aria-labelledby="addresses-hero-title"
+      aria-describedby="addresses-hero-desc"
+    >
       <div>
         <span class="pill">收货地址</span>
         <h1 id="addresses-hero-title" class="addresses-title">为每个社区成员匹配配送地址</h1>
-      <p id="addresses-hero-desc" class="addresses-desc">
-        管理常用地址可提升下单效率，系统会自动关联团长覆盖的社区范围。支持设置默认地址与快速删除。
-      </p>
+        <p id="addresses-hero-desc" class="addresses-desc">
+          管理常用地址可以显著提升下单效率，系统会自动关联团长覆盖的社区范围，支持设置默认地址并快速调整。
+        </p>
       </div>
-      <div class="stat-card">
+      <div class="stat-card" aria-live="polite">
         <span class="stat-card__title">已保存地址</span>
         <span class="stat-card__value">{{ list.length }}</span>
       </div>
@@ -17,7 +21,12 @@
       </p>
     </section>
 
-    <section class="page-card address-list" aria-labelledby="addresses-list-title" role="region" aria-describedby="addresses-default-tip">
+    <section
+      class="page-card address-list"
+      aria-labelledby="addresses-list-title"
+      role="region"
+      aria-describedby="addresses-default-tip"
+    >
       <header class="page-section-title">
         <h2 id="addresses-list-title">地址列表</h2>
       </header>
@@ -80,7 +89,7 @@
         <el-form-item label="社区 ID（可选）" prop="communityId">
           <el-input
             v-model="form.communityId"
-            placeholder="方便匹配团长，输入数字"
+            placeholder="方便匹配团长，建议填写社区 ID（纯数字）"
             clearable
           />
         </el-form-item>
@@ -108,7 +117,7 @@ const list = ref([])
 const defaultId = ref(null)
 const loading = ref(false)
 const submitting = ref(false)
-const formRef = ref()
+const formRef = ref(null)
 
 const form = reactive({
   detail: '',
@@ -135,7 +144,7 @@ const rules = {
         if (!value) return callback()
         const trimmed = value.trim()
         if (!trimmed) return callback()
-        if (!/^\d+$/.test(trimmed)) return callback(new Error('社区 ID 需为数字'))
+        if (!/^\d+$/.test(trimmed)) return callback(new Error('社区 ID 仅支持数字'))
         return callback()
       },
       trigger: 'blur'
@@ -171,7 +180,7 @@ const handleAdd = () => {
         communityId: form.communityId ? Number(form.communityId.trim()) : null
       }
       if (payload.communityId !== null && Number.isNaN(payload.communityId)) {
-        ElMessage.error('社区 ID 需为数字')
+        ElMessage.error('社区 ID 仅支持数字')
         submitting.value = false
         return
       }
@@ -181,10 +190,10 @@ const handleAdd = () => {
         resetForm()
         await load()
       } else {
-        ElMessage.error(res.msg || '添加失败')
+        ElMessage.error(res.msg || '新增失败')
       }
     } catch (error) {
-      ElMessage.error(error.message || '添加失败')
+      ElMessage.error(error.message || '新增失败')
     } finally {
       submitting.value = false
     }
@@ -246,6 +255,27 @@ onMounted(load)
   margin: 0;
   font-size: 15px;
   color: var(--text-2);
+}
+
+.stat-card {
+  padding: 16px 20px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.1);
+  display: grid;
+  gap: 6px;
+  text-align: center;
+}
+
+.stat-card__title {
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.stat-card__value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--brand-primary);
 }
 
 .address-grid {

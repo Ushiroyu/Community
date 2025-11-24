@@ -45,6 +45,7 @@ public class UserSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/users/login", "/users/register",
+                                "/users/reset-password",
                                 "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
                                 "/geo/**").permitAll()
                         .anyRequest().authenticated()

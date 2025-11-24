@@ -43,14 +43,40 @@ public class InventoryRedisServiceImpl implements InventoryRedisService {
     @Override
     public boolean reserveStock(Long productId, int quantity) {
         if (productId == null || quantity <= 0) return false;
-        Long ok = stringRedisTemplate.execute(RESERVE_LUA, Collections.singletonList(key(productId)), String.valueOf(quantity));
-        return ok != null && ok == 1L;
+        String k = key(productId);
+        if (tryReserveAndPersist(productId, quantity, k)) return true;
+
+        // 若 Redis 未命中或库存未同步，先回源数据库，再尝试一次
+        Boolean exists = stringRedisTemplate.hasKey(k);
+        if (exists == null || !exists) {
+            syncFromDb(productId);
+            if (tryReserveAndPersist(productId, quantity, k)) return true;
+        }
+
+        // 仍不足时，直接查数据库库存兜底（避免缓存未预热导致的误判）
+        Product p = productMapper.selectById(productId);
+        int dbStock = (p == null || p.getStock() == null) ? 0 : p.getStock();
+        if (dbStock >= quantity) {
+            stringRedisTemplate.opsForValue().set(k, String.valueOf(dbStock));
+            if (tryReserveAndPersist(productId, quantity, k)) return true;
+        }
+        return false;
     }
 
     @Override
     public void releaseStock(Long productId, int quantity) {
         if (productId == null || quantity <= 0) return;
         stringRedisTemplate.opsForValue().increment(key(productId), quantity);
+    }
+
+    private boolean tryReserveAndPersist(Long productId, int quantity, String redisKey) {
+        Long ok = stringRedisTemplate.execute(RESERVE_LUA, Collections.singletonList(redisKey), String.valueOf(quantity));
+        if (ok == null || ok != 1L) return false;
+        int rows = productMapper.deductStock(productId, quantity);
+        if (rows > 0) return true;
+        // DB 扣减失败则回滚 Redis 预占
+        releaseStock(productId, quantity);
+        return false;
     }
 
     @Override
@@ -61,4 +87,3 @@ public class InventoryRedisServiceImpl implements InventoryRedisService {
         stringRedisTemplate.opsForValue().set(key(productId), String.valueOf(stock));
     }
 }
-

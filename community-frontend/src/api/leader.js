@@ -12,3 +12,5 @@ export const getCommunity = (id) => http.get(`/communities/${id}`)
 
 export const nearbyCommunities = (lat, lng, limit = 5) =>
   http.get('/communities/nearby', { params: { lat, lng, limit } })
+
+export const listCommunities = () => http.get('/communities')

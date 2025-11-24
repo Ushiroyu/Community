@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.community.common.util.ApiResponse;
 import com.community.common.util.JwtUtil;
 import com.community.user.dto.LoginDTO;
+import com.community.user.dto.ResetPasswordDTO;
 import com.community.user.dto.UserRegisterDTO;
 import com.community.user.dto.UserUpdateDTO;
 import com.community.user.entity.User;
@@ -27,8 +28,36 @@ public class UserController {
 
     @PostMapping("/register")
     public ApiResponse register(@RequestBody UserRegisterDTO dto) {
+        String normalizedPhone = normalizePhone(dto.getPhone());
+        if (normalizedPhone == null) return ApiResponse.error("手机号格式不正确");
+        dto.setPhone(normalizedPhone);
         boolean ok = userService.register(dto);
         return ok ? ApiResponse.ok("注册成功") : ApiResponse.error("用户名已存在");
+    }
+
+    /**
+     * 自助重置密码：校验手机号匹配后重置
+     */
+    @PostMapping("/reset-password")
+    public ApiResponse resetPassword(@RequestBody ResetPasswordDTO dto) {
+        if (dto == null || dto.getUsername() == null || dto.getUsername().isBlank()) {
+            return ApiResponse.error("用户名不能为空");
+        }
+        if (dto.getNewPassword() == null || dto.getNewPassword().isBlank()) {
+            return ApiResponse.error("新密码不能为空");
+        }
+        User u = userService.lambdaQuery().eq(User::getUsername, dto.getUsername().trim()).one();
+        if (u == null) return ApiResponse.error("用户不存在");
+        if (u.getPhone() == null || u.getPhone().isBlank()) {
+            return ApiResponse.error("该账号未绑定手机号，请联系管理员重置");
+        }
+        String normalizedPhone = normalizePhone(dto.getPhone());
+        if (normalizedPhone == null || !Objects.equals(u.getPhone(), normalizedPhone)) {
+            return ApiResponse.error("手机号不匹配，无法重置");
+        }
+        u.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        userService.updateById(u);
+        return ApiResponse.ok("密码已重置，请使用新密码登录");
     }
 
     @PostMapping("/login")
@@ -70,8 +99,10 @@ public class UserController {
             }
         }
         if (dto.phone() != null) {
-            String phone = dto.phone().trim();
-            String normalizedPhone = phone.isEmpty() ? null : phone;
+            String normalizedPhone = normalizePhone(dto.phone());
+            if (dto.phone() != null && !dto.phone().isBlank() && normalizedPhone == null) {
+                return ApiResponse.error("手机号格式不正确");
+            }
             if (!Objects.equals(u.getPhone(), normalizedPhone)) {
                 u.setPhone(normalizedPhone);
                 changed = true;
@@ -134,5 +165,15 @@ public class UserController {
         return ApiResponse.ok()
                 .data("list", p.getRecords())
                 .data("total", p.getTotal());
+    }
+
+    /**
+     * 仅保留数字，长度 6-20 合法，否则返回 null
+     */
+    private static String normalizePhone(String phone) {
+        if (phone == null) return null;
+        String digits = phone.replaceAll("\\D", "");
+        if (digits.isEmpty()) return null;
+        return (digits.length() >= 6 && digits.length() <= 20) ? digits : null;
     }
 }

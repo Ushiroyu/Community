@@ -1,4 +1,4 @@
-server:
+12server:
   port: 8082
   forward-headers-strategy: framework
 
@@ -29,7 +29,7 @@ spring:
     password: ${RABBITMQ_PASS:guest}
   cloud:
     discovery:
-      enabled: ${DISCOVERY_ENABLED:false}
+    enabled: ${DISCOVERY_ENABLED:false}
 
 springdoc:
   api-docs.enabled: true

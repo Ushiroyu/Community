@@ -31,7 +31,7 @@
           </el-form-item>
           <div class="form-actions">
             <el-checkbox v-model="remember">记住我</el-checkbox>
-            <el-button text type="primary">忘记密码？</el-button>
+            <el-button text type="primary" @click="goForgot">忘记密码？</el-button>
           </div>
           <el-button type="primary" size="large" :loading="loading" @click="onSubmit" class="submit-btn">
             登录
@@ -59,6 +59,10 @@ const user = useUserStore()
 const form = reactive({ username: '', password: '' })
 const loading = ref(false)
 const remember = ref(true)
+
+const goForgot = () => {
+  router.push('/forgot')
+}
 
 const onSubmit = async () => {
   if (!form.username || !form.password) {

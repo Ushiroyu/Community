@@ -25,26 +25,20 @@
             <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
 
-        <!-- Consul 服务发现 -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-consul-discovery</artifactId>
-        </dependency>
-
-        <!-- 健康检查 / 指标 -->
+        <!-- 健康检�?/ 指标 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <!-- 聚合 Swagger UI，统一查看各微服务的 OpenAPI -->
+        <!-- 聚合 Swagger UI，统一查看各微服务�?OpenAPI -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
             <version>${springdoc.version}</version>
         </dependency>
 
-        <!-- 建议：生产使用 Caffeine 作为 LoadBalancer 缓存 -->
+        <!-- 建议：生产使�?Caffeine 作为 LoadBalancer 缓存 -->
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
@@ -60,3 +54,4 @@
         </plugins>
     </build>
 </project>
+

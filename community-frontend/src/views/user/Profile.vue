@@ -36,6 +36,13 @@
             aria-describedby="profile-edit-tip"
           />
         </el-form-item>
+        <el-form-item label="绑定手机号">
+          <el-input
+            v-model="form.phone"
+            placeholder="用于找回密码，需与账号绑定一致"
+            clearable
+          />
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" :loading="saving" @click="save">
             保存信息
@@ -107,7 +114,7 @@ import { updateUserById } from '@/api/users'
 import { applyLeader as applyLeaderApi } from '@/api/leader'
 
 const user = useUserStore()
-const form = reactive({ nickname: user.username || '' })
+const form = reactive({ nickname: user.username || '', phone: user.phone || '' })
 const saving = ref(false)
 
 const roleLabel = computed(() => {
@@ -132,12 +139,19 @@ const save = async () => {
     ElMessage.error('请填写昵称')
     return
   }
+  const phoneDigits = form.phone ? form.phone.replace(/\\D/g, '') : ''
+  if (form.phone && (phoneDigits.length < 6 || phoneDigits.length > 20)) {
+    ElMessage.error('手机号格式不正确')
+    return
+  }
   saving.value = true
   try {
-    const res = await updateUserById(user.userId, { nickname: form.nickname })
+    const payload = { nickname: form.nickname, phone: phoneDigits || null }
+    const res = await updateUserById(user.userId, payload)
     if (res.code === 0) {
       ElMessage.success('信息已更新')
       user.username = form.nickname
+      user.phone = payload.phone
     } else {
       ElMessage.error(res.msg || '更新失败')
     }

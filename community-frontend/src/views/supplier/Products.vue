@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="page-wrap supplier-products">
     <section class="page-card products-hero" aria-labelledby="supplier-products-title" aria-describedby="supplier-products-desc">
       <div>
@@ -45,7 +45,7 @@
           <el-input
             v-model="form.description"
             type="textarea"
-            rows="3"
+            :rows="3"
             maxlength="200"
             show-word-limit
             placeholder="简要介绍商品亮点"
@@ -108,7 +108,7 @@
 import { reactive, ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/user'
-import { listSupplierProducts, createSupplierProduct, setSupplierProductStatus } from '@/api/supplier'
+import { listMyProducts, createSupplierProduct, setSupplierProductStatus } from '@/api/supplier'
 
 const user = useUserStore()
 const list = ref([])
@@ -199,14 +199,14 @@ const resetForm = () => {
 const load = async () => {
   loading.value = true
   try {
-    const res = await listSupplierProducts(user.userId, { page: 1, size: 100 })
+    const res = await listMyProducts({ page: 1, size: 100 })
     if (res.code === 0) {
       list.value = res.records || res.data?.records || res.list || []
     } else {
       ElMessage.error(res.msg || '商品列表加载失败')
     }
-  } catch (error) {
-    ElMessage.error(error.message || '加载失败')
+    } catch (error) {
+      ElMessage.error(error?.__response?.msg || error?.message || '加载失败')
   } finally {
     loading.value = false
   }
@@ -225,7 +225,7 @@ const handleCreate = () => {
         stock: Number(form.stock),
         description: form.description?.trim() || ''
       }
-      const res = await createSupplierProduct(user.userId, payload)
+      const res = await createSupplierProduct(0, payload)
       if (res.code === 0) {
         ElMessage.success('商品已提交审核')
         resetForm()
@@ -234,7 +234,7 @@ const handleCreate = () => {
         ElMessage.error(res.msg || '发布失败')
       }
     } catch (error) {
-      ElMessage.error(error.message || '发布异常')
+      ElMessage.error(error?.__response?.msg || error?.message || '发布异常')
     } finally {
       submitting.value = false
     }
@@ -243,7 +243,7 @@ const handleCreate = () => {
 
 const toggle = async (row) => {
   try {
-    const res = await setSupplierProductStatus(user.userId, row.id, !row.status)
+    const res = await setSupplierProductStatus(0, row.id, !row.status)
     if (res.code === 0) {
       ElMessage.success('商品状态已更新')
       await load()
@@ -251,7 +251,7 @@ const toggle = async (row) => {
       ElMessage.error(res.msg || '更新失败')
     }
   } catch (error) {
-    ElMessage.error(error.message || '更新失败')
+    ElMessage.error(error?.__response?.msg || error?.message || '更新失败')
   }
 }
 
@@ -304,3 +304,4 @@ onMounted(load)
   align-items: center;
 }
 </style>
+

@@ -85,6 +85,7 @@ public class OrderController {
         // 2) 创建订单 + 订单项（单商品简化）
         Order o = new Order();
         o.setUserId(userId);
+        // leaderId 这里保存团长用户ID，后续按用户ID查询
         o.setLeaderId(leaderId);
         o.setSupplierId(supplierId);
         o.setAddressId(addressId);
@@ -243,14 +244,17 @@ public class OrderController {
     // 按团长查询订单（LEADER/ADMIN）
     @GetMapping("/by-leader")
     @PreAuthorize("hasAnyRole('LEADER','ADMIN')")
-    public ApiResponse byLeader(@RequestParam Long leaderId,
+    public ApiResponse byLeader(@RequestParam(required = false) Long leaderId,
                                 @RequestParam(required = false) String status,
                                 @RequestParam(defaultValue = "1") long page,
                                 @RequestParam(defaultValue = "10") long size) {
+        Long uid = currentUserIdOrNull();
         if (!isAdmin()) {
-            Long uid = currentUserIdOrNull();
-            if (uid == null || !uid.equals(leaderId)) return ApiResponse.error("无权限");
+            if (uid == null) return ApiResponse.error("无权限");
+            if (leaderId == null) leaderId = uid;
+            if (!uid.equals(leaderId)) return ApiResponse.error("无权限");
         }
+        if (leaderId == null) return ApiResponse.error("缺少团长ID");
         var qw = new LambdaQueryWrapper<Order>()
                 .eq(Order::getLeaderId, leaderId)
                 .orderByDesc(Order::getCreatedAt);

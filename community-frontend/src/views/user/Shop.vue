@@ -91,6 +91,7 @@
               <h3 class="product-title">{{ product.name }}</h3>
               <p class="product-meta">
                 库存：<strong>{{ product.stock ?? 0 }}</strong>
+                <span class="product-supplier">供应商 ID：{{ product.supplierId || '暂无' }}</span>
               </p>
               <div class="product-info">
                 <span class="product-price">¥ {{ product.price }}</span>
@@ -311,6 +312,14 @@ onMounted(async () => {
   font-size: 13px;
   color: var(--text-2);
   margin: 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.product-supplier {
+  font-size: 12px;
+  color: var(--text-3);
 }
 
 .product-info {

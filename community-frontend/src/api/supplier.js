@@ -29,3 +29,6 @@ export const setSupplierProductStatus = (supplierId, productId, status) =>
   http.put(`/suppliers/${supplierId}/products/${productId}/status`, null, { params: { status } })
 
 export const me = () => http.get('/suppliers/me')
+
+export const listMyProducts = ({ page = 1, size = 20 } = {}) =>
+  http.get('/suppliers/0/products/all-by-user', { params: { page, size } })

@@ -91,6 +91,22 @@ const roleLabel = computed(() => {
   }
 })
 
+const baseUserMenus = [
+  { id: 'user-shop', label: '社区逛逛', to: '/shop', icon: ShoppingCartFull },
+  { id: 'user-cart', label: '我的购物车', to: '/u/cart', icon: Goods },
+  { id: 'user-orders', label: '我的订单', to: '/u/orders', icon: Tickets },
+  { id: 'user-communities', label: '社区目录', to: '/communities', icon: House },
+  {
+    id: 'user-profile',
+    label: '个人中心',
+    icon: UserFilled,
+    children: [
+      { id: 'user-profile-basic', label: '资料设置', to: '/u/profile' },
+      { id: 'user-profile-address', label: '收货地址', to: '/u/addresses' }
+    ]
+  }
+]
+
 const menus = computed(() => {
   switch (role.value) {
     case 'ADMIN':
@@ -109,7 +125,8 @@ const menus = computed(() => {
         { id: 'admin-orders', label: '订单管理', to: '/admin/orders', icon: Tickets },
         { id: 'admin-users', label: '用户管理', to: '/admin/users', icon: UserFilled },
         { id: 'admin-permissions', label: '权限配置', to: '/admin/permissions', icon: Postcard },
-        { id: 'admin-categories', label: '分类管理', to: '/admin/categories', icon: List }
+        { id: 'admin-categories', label: '分类管理', to: '/admin/categories', icon: List },
+        ...baseUserMenus
       ]
     case 'SUPPLIER':
       return [
@@ -117,29 +134,18 @@ const menus = computed(() => {
         { id: 'supplier-products', label: '商品管理', to: '/supplier/products', icon: Goods },
         { id: 'supplier-orders', label: '订单处理', to: '/supplier/orders', icon: Tickets },
         { id: 'supplier-shipments', label: '发货管理', to: '/supplier/shipments', icon: Van },
-        { id: 'supplier-stats', label: '数据分析', to: '/supplier/stats', icon: TrendCharts }
+        { id: 'supplier-stats', label: '数据分析', to: '/supplier/stats', icon: TrendCharts },
+        ...baseUserMenus
       ]
     case 'LEADER':
       return [
         { id: 'leader-dashboard', label: '工作台', to: '/leader/dashboard', icon: House },
         { id: 'leader-orders', label: '社区订单', to: '/leader/orders', icon: Tickets },
-        { id: 'leader-stats', label: '经营数据', to: '/leader/stats', icon: Histogram }
+        { id: 'leader-stats', label: '经营数据', to: '/leader/stats', icon: Histogram },
+        ...baseUserMenus
       ]
     case 'USER':
-      return [
-        { id: 'user-shop', label: '社区逛逛', to: '/shop', icon: ShoppingCartFull },
-        { id: 'user-cart', label: '我的购物车', to: '/u/cart', icon: Goods },
-        { id: 'user-orders', label: '我的订单', to: '/u/orders', icon: Tickets },
-        {
-          id: 'user-profile',
-          label: '个人中心',
-          icon: UserFilled,
-          children: [
-            { id: 'user-profile-basic', label: '资料设置', to: '/u/profile' },
-            { id: 'user-profile-address', label: '收货地址', to: '/u/addresses' }
-          ]
-        }
-      ]
+      return baseUserMenus
     default:
       return [
         { id: 'guest-shop', label: '浏览商品', to: '/shop', icon: ShoppingCartFull }

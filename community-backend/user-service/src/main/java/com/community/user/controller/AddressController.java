@@ -4,6 +4,7 @@ import com.community.common.util.ApiResponse;
 import com.community.user.entity.Address;
 import com.community.user.service.AddressService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,11 @@ public class AddressController {
     @PreAuthorize("#userId.toString() == authentication.name or hasRole('ADMIN')")
     public ApiResponse add(@PathVariable Long userId, @RequestBody Address address) {
         address.setUserId(userId);
-        addressService.save(address);
+        try {
+            addressService.save(address);
+        } catch (DataIntegrityViolationException ex) {
+            return ApiResponse.error("社区不存在，请检查 ID");
+        }
         return ApiResponse.ok("地址添加成功").data("id", address.getId());
     }
 
@@ -62,7 +67,11 @@ public class AddressController {
         if (addr == null || !addr.getUserId().equals(userId)) return ApiResponse.error("地址不存在");
         if (payload.getDetail() != null) addr.setDetail(payload.getDetail());
         if (payload.getCommunityId() != null) addr.setCommunityId(payload.getCommunityId());
-        addressService.updateById(addr);
+        try {
+            addressService.updateById(addr);
+        } catch (DataIntegrityViolationException ex) {
+            return ApiResponse.error("社区不存在，请检查 ID");
+        }
         return ApiResponse.ok("地址已更新");
     }
 

@@ -5,6 +5,8 @@ import { useUserStore } from '@/store/user'
 const PublicLayout = () => import('@/layouts/PublicLayout.vue')
 const Login = () => import('@/views/user/Login.vue')
 const Register = () => import('@/views/user/Register.vue')
+const Forgot = () => import('@/views/user/ForgotPassword.vue')
+const Communities = () => import('@/views/user/CommunityDirectory.vue')
 const Shop = () => import('@/views/user/Shop.vue')
 const ProductDetail = () => import('@/views/user/ProductDetail.vue')
 
@@ -49,7 +51,9 @@ const routes = [
       { path: 'shop', component: Shop },
       { path: 'products/:id', component: ProductDetail },
       { path: 'login', component: Login },
-      { path: 'register', component: Register }
+      { path: 'register', component: Register },
+      { path: 'forgot', component: Forgot },
+      { path: 'communities', component: Communities }
     ]
   },
 
@@ -125,7 +129,11 @@ router.beforeEach((to, from, next) => {
   if (!store.isLogin) {
     return next({ path: '/login', query: { redirect: to.fullPath } })
   }
-  if (roles.includes(store.role)) return next()
+  // 用户区允许其他已登录角色（如 LEADER/SUPPLIER/ADMIN）也访问购物相关页面
+  const isUserPage = roles.includes('USER')
+  if (roles.includes(store.role) || (isUserPage && ['LEADER', 'SUPPLIER', 'ADMIN'].includes(store.role))) {
+    return next()
+  }
 
   // 角色不匹配，回到公开页
   return next('/shop')

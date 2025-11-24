@@ -26,7 +26,9 @@ http.interceptors.response.use(
     if (data && typeof data === 'object' && 'code' in data) {
       if (Number(data.code) !== 0) {
         const msg = data.msg || data.message || '请求失败'
-        return Promise.reject(new Error(msg))
+        const err = new Error(msg)
+        err.__response = data
+        return Promise.reject(err)
       }
       return data
     }

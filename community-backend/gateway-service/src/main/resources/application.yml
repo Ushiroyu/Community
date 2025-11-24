@@ -12,91 +12,59 @@ spring:
     serialization:
       write-dates-as-timestamps: false
 
-  # 彻底禁用 Consul/注册发现（即使 classpath 有依赖也不加载）
-  autoconfigure:
-    exclude:
-      - org.springframework.cloud.consul.ConsulAutoConfiguration
-      - org.springframework.cloud.consul.config.ConsulConfigAutoConfiguration
-      - org.springframework.cloud.consul.discovery.ConsulDiscoveryClientAutoConfiguration
-      - org.springframework.cloud.consul.serviceregistry.ConsulServiceRegistryAutoConfiguration
-      - org.springframework.cloud.consul.serviceregistry.ConsulAutoServiceRegistrationAutoConfiguration
-
   cloud:
     discovery:
       enabled: false
-    consul:
-      enabled: false
-      config:
-        enabled: false
-      discovery:
-        enabled: false
-        register: false
-      catalog:
-        watch:
-          enabled: false
-
-    # ✅ 新前缀：spring.cloud.gateway.server.webflux.*
     gateway:
       server:
         webflux:
           default-filters:
             - AddResponseHeader=X-Request-By, gateway
-
           globalcors:
             add-to-simple-url-handler-mapping: true
             cors-configurations:
               '[/**]':
-                # 对开发环境更稳妥：用 patterns，允许任意来源（不含凭证）
                 allowed-origin-patterns: "*"
                 allowed-origins: "*"
                 allowed-methods: "*"
                 allowed-headers: "*"
                 allow-credentials: false
-
           routes:
-            # 更具体的匹配，避免被 /suppliers/** 抢走（归 product-service）
             - id: product-supplier-products
               uri: ${PRODUCT_SVC_URI:http://localhost:8082}
               order: -1
               predicates:
                 - Path=/suppliers/*/products/**
-
             - id: user
               uri: ${USER_SVC_URI:http://localhost:8081}
               predicates:
                 - Path=/users/**
-
             - id: product
               uri: ${PRODUCT_SVC_URI:http://localhost:8082}
               predicates:
                 - Path=/products/**
                 - Path=/categories
                 - Path=/categories/**
-
             - id: order
               uri: ${ORDER_SVC_URI:http://localhost:8083}
               predicates:
                 - Path=/orders/**
                 - Path=/cart/**
                 - Path=/stats/**
-
             - id: leader
               uri: ${LEADER_SVC_URI:http://localhost:8084}
               predicates:
                 - Path=/leaders/**
                 - Path=/communities/**
-
             - id: supplier
               uri: ${SUPPLIER_SVC_URI:http://localhost:8085}
               predicates:
                 - Path=/shipping/**
                 - Path=/suppliers/**
-
             - id: admin
               uri: ${ADMIN_SVC_URI:http://localhost:8086}
               predicates:
                 - Path=/admin/**
-
             - id: geo
               uri: ${USER_SVC_URI:http://localhost:8081}
               predicates:
@@ -117,7 +85,6 @@ logging:
     org.springframework.cloud.gateway: INFO
     reactor.netty: WARN
 
-# Swagger UI 聚合配置：通过网关统一查看各微服务 API
 springdoc:
   api-docs:
     enabled: false

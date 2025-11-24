@@ -2,6 +2,7 @@ package com.community.leader.controller;
 
 import com.community.common.util.ApiResponse;
 import com.community.leader.entity.Community;
+import com.community.leader.entity.Leader;
 import com.community.leader.service.LeaderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,19 @@ public class CommunityController {
 
     @GetMapping
     public ApiResponse list() {
-        return ApiResponse.ok().data("communities", leaderService.listAllCommunities());
+        var all = leaderService.listAllCommunities();
+        for (var c : all) {
+            var leader = leaderService.lambdaQuery()
+                    .eq(com.community.leader.entity.Leader::getCommunityId, c.getId())
+                    .eq(com.community.leader.entity.Leader::getStatus, "APPROVED")
+                    .last("limit 1")
+                    .one();
+            if (leader != null) {
+                c.setLeaderId(leader.getId());
+                c.setLeaderUserId(leader.getUserId());
+            }
+        }
+        return ApiResponse.ok().data("communities", all);
     }
 
     /**
@@ -27,7 +40,21 @@ public class CommunityController {
     public ApiResponse getById(@PathVariable Long id) {
         var all = leaderService.listAllCommunities();
         var c = all.stream().filter(x -> id.equals(x.getId())).findFirst().orElse(null);
-        return (c == null) ? ApiResponse.error("社区不存在") : ApiResponse.ok().data("community", c);
+        if (c == null) return ApiResponse.error("社区不存在");
+
+        var leader = leaderService.lambdaQuery()
+                .eq(Leader::getCommunityId, id)
+                .eq(Leader::getStatus, "APPROVED")
+                .last("limit 1")
+                .one();
+        if (leader != null) {
+            c.setLeaderId(leader.getId());
+            c.setLeaderUserId(leader.getUserId());
+        }
+        return ApiResponse.ok()
+                .data("community", c)
+                .data("leaderId", leader == null ? null : leader.getId())
+                .data("leaderUserId", leader == null ? null : leader.getUserId());
     }
 
     /**

@@ -24,6 +24,9 @@
           <el-form-item label="用户名">
             <el-input v-model="form.username" placeholder="请输入用户名" clearable />
           </el-form-item>
+          <el-form-item label="手机号">
+            <el-input v-model="form.phone" placeholder="用于找回密码与绑定账号" clearable />
+          </el-form-item>
           <el-form-item label="密码">
             <el-input v-model="form.password" type="password" show-password placeholder="请输入密码" />
           </el-form-item>
@@ -50,12 +53,17 @@ import { ElMessage } from 'element-plus'
 import { register } from '@/api/auth'
 
 const router = useRouter()
-const form = reactive({ username: '', password: '', confirm: '' })
+const form = reactive({ username: '', phone: '', password: '', confirm: '' })
 const loading = ref(false)
 
 const onSubmit = async () => {
-  if (!form.username || !form.password) {
-    ElMessage.error('请输入用户名和密码')
+  if (!form.username || !form.phone || !form.password || !form.confirm) {
+    ElMessage.error('请完整填写用户名、手机号和密码')
+    return
+  }
+  const phoneDigits = form.phone.replace(/\D/g, '')
+  if (phoneDigits.length < 6 || phoneDigits.length > 20) {
+    ElMessage.error('手机号格式不正确')
     return
   }
   if (form.password !== form.confirm) {
@@ -64,7 +72,11 @@ const onSubmit = async () => {
   }
   loading.value = true
   try {
-    const res = await register({ username: form.username, password: form.password })
+    const res = await register({
+      username: form.username,
+      phone: phoneDigits,
+      password: form.password
+    })
     if (res.code === 0 || res.success === true || res.status === 200) {
       ElMessage.success('注册成功，请登录')
       setTimeout(() => router.push('/login'), 500)

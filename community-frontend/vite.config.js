@@ -40,6 +40,12 @@ export default defineConfig(({ mode }) => {
         '/api/leaders': { target: 'http://localhost:8084', changeOrigin: true, rewrite: p => p.replace(/^\/api/, '') },
         '/api/communities': { target: 'http://localhost:8084', changeOrigin: true, rewrite: p => p.replace(/^\/api/, '') },
 
+        // Supplier product APIs are served by product-service; keep dev proxy consistent with gateway route priority
+        '^/api/suppliers/.+/products': {
+          target: 'http://localhost:8082',
+          changeOrigin: true,
+          rewrite: (p) => p.replace(/^\/api/, '')
+        },
         '/api/suppliers': { target: 'http://localhost:8085', changeOrigin: true, rewrite: p => p.replace(/^\/api/, '') },
         '/api/shipping': { target: 'http://localhost:8085', changeOrigin: true, rewrite: p => p.replace(/^\/api/, '') },
 
