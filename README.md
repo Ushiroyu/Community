@@ -13,7 +13,8 @@
 | --- | --- |
 | `community-backend/` | Spring Boot + Spring Cloud 多模块后端（用户、商品、订单、团长、供应商、管理后台、网关、公共模块），详见该目录下新的 `README.md`。 |
 | `community-frontend/` | Vue 3 + Vite + Pinia + Element Plus 的多角色前端，详见该目录下新的 `README.md`。 |
-| `init.sql` | 数据库初始化脚本，已合并 `community-backend/database/schema.sql` 与 `data.sql`，一次执行即可完成建表与演示数据导入。 |
+| `community-backend/database/schema.sql` | 数据库建表脚本。 |
+| `community-backend/database/data.sql` | 演示数据导入脚本。 |
 | `docker-compose.yml` | 快速启动 Redis、RabbitMQ、Adminer（可视化管理 MySQL）的最小依赖。 |
 | `postman_collection.json` | 通过网关访问的核心 API Postman 集合副本，便于直接导入调试（原始文件位于 `community-backend/docs/postman/`）。 |
 | `docs/api/openapi.yaml` | 精简 OpenAPI 3.0 规范，覆盖登录、商品、购物车、订单、统计等关键接口。 |
@@ -22,7 +23,7 @@
 
 ## 一键启动 / 快速体验
 1. 在仓库根目录执行 `docker-compose up -d`，一次拉起 MySQL 依赖（Adminer 可选，用于可视化管理）。
-2. 运行 `init.sql`（或分别执行 `community-backend/database/schema.sql` + `data.sql`）初始化数据库。
+2. 运行 `community-backend/database/schema.sql` + `community-backend/database/data.sql` 初始化数据库。
 3. 进入 `community-backend` 执行 `./mvnw spring-boot:run -pl gateway-service -am`，即可将各后端模块连同网关拉起。
 4. 进入 `community-frontend` 执行 `npm install && npm run dev`，通过 `http://localhost:5173` 访问前端，默认代理网关 `http://localhost:8080`。
 5. 调试 API 时，可打开 `http://localhost:8080/swagger-ui/index.html` 查看聚合文档，或导入 `postman_collection.json` 直接调用。
@@ -99,7 +100,7 @@ flowchart LR
 ## 运行快速指引
 1. **准备依赖**：JDK 21、Node.js 18+、Maven 3.9+、npm/pnpm、Docker（可选）。
 2. **启动基础设施**（可选）：在仓库根目录执行 `docker-compose up -d`，获得 Redis、RabbitMQ、Adminer。
-3. **导入数据库**：将 `init.sql` 导入 MySQL，并创建与 `application.yml` 一致的账号/密码。
+3. **导入数据库**：依次导入 `community-backend/database/schema.sql` 与 `community-backend/database/data.sql`，并创建与 `application.yml` 一致的账号/密码。
 4. **配置环境变量**（示例）：
    - `MYSQL_HOST`, `MYSQL_PORT`, `MYSQL_USER`, `MYSQL_PASSWORD`
    - `REDIS_HOST`, `RABBITMQ_HOST`
