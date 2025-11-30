@@ -1,10 +1,11 @@
 import axios from 'axios'
 import { useUserStore } from '@/store/user'
 
-// Dev: use Vite proxy to avoid CORS; Prod: talk to gateway
-const baseURL = import.meta.env.DEV
-  ? (import.meta.env.VITE_API_PREFIX || '/api')
-  : (import.meta.env.VITE_GATEWAY || '')
+// API 基地址：优先显式网关，其次自定义前缀，最后默认指向后端网关（便于部署测试）
+const baseURL =
+  import.meta.env.VITE_GATEWAY ||
+  import.meta.env.VITE_API_PREFIX ||
+  (import.meta.env.DEV ? '/api' : 'http://8.148.158.99:8080')
 
 const http = axios.create({
   baseURL,
