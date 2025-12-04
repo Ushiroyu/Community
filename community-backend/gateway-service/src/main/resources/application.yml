@@ -16,59 +16,57 @@ spring:
     discovery:
       enabled: false
     gateway:
-      server:
-        webflux:
-          default-filters:
-            - AddResponseHeader=X-Request-By, gateway
-          globalcors:
-            add-to-simple-url-handler-mapping: true
-            cors-configurations:
-              '[/**]':
-                allowed-origin-patterns: "*"
-                allowed-origins: "*"
-                allowed-methods: "*"
-                allowed-headers: "*"
-                allow-credentials: false
-          routes:
-            - id: product-supplier-products
-              uri: ${PRODUCT_SVC_URI:http://localhost:8082}
-              order: -1
-              predicates:
-                - Path=/suppliers/*/products/**
-            - id: user
-              uri: ${USER_SVC_URI:http://localhost:8081}
-              predicates:
-                - Path=/users/**
-            - id: product
-              uri: ${PRODUCT_SVC_URI:http://localhost:8082}
-              predicates:
-                - Path=/products/**
-                - Path=/categories
-                - Path=/categories/**
-            - id: order
-              uri: ${ORDER_SVC_URI:http://localhost:8083}
-              predicates:
-                - Path=/orders/**
-                - Path=/cart/**
-                - Path=/stats/**
-            - id: leader
-              uri: ${LEADER_SVC_URI:http://localhost:8084}
-              predicates:
-                - Path=/leaders/**
-                - Path=/communities/**
-            - id: supplier
-              uri: ${SUPPLIER_SVC_URI:http://localhost:8085}
-              predicates:
-                - Path=/shipping/**
-                - Path=/suppliers/**
-            - id: admin
-              uri: ${ADMIN_SVC_URI:http://localhost:8086}
-              predicates:
-                - Path=/admin/**
-            - id: geo
-              uri: ${USER_SVC_URI:http://localhost:8081}
-              predicates:
-                - Path=/geo/**
+      default-filters:
+        - AddResponseHeader=X-Request-By, gateway
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          '[/**]':
+            allowed-origin-patterns: "*"
+            allowed-origins: "*"
+            allowed-methods: "*"
+            allowed-headers: "*"
+            allow-credentials: false
+      routes:
+        - id: product-supplier-products
+          uri: ${PRODUCT_SVC_URI:http://localhost:8082}
+          order: -1
+          predicates:
+            - Path=/suppliers/*/products/**
+        - id: user
+          uri: ${USER_SVC_URI:http://localhost:8081}
+          predicates:
+            - Path=/users/**
+        - id: product
+          uri: ${PRODUCT_SVC_URI:http://localhost:8082}
+          predicates:
+            - Path=/products/**
+            - Path=/categories
+            - Path=/categories/**
+        - id: order
+          uri: ${ORDER_SVC_URI:http://localhost:8083}
+          predicates:
+            - Path=/orders/**
+            - Path=/cart/**
+            - Path=/stats/**
+        - id: leader
+          uri: ${LEADER_SVC_URI:http://localhost:8084}
+          predicates:
+            - Path=/leaders/**
+            - Path=/communities/**
+        - id: supplier
+          uri: ${SUPPLIER_SVC_URI:http://localhost:8085}
+          predicates:
+            - Path=/shipping/**
+            - Path=/suppliers/**
+        - id: admin
+          uri: ${ADMIN_SVC_URI:http://localhost:8086}
+          predicates:
+            - Path=/admin/**
+        - id: geo
+          uri: ${USER_SVC_URI:http://localhost:8081}
+          predicates:
+            - Path=/geo/**
 
 management:
   endpoints:
