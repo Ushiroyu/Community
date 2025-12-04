@@ -45,19 +45,19 @@ spring:
         - id: product
           uri: ${PRODUCT_SVC_URI:http://localhost:8082}
           predicates:
-            - Path=/products/**, /categories, /categories/**
+            - Path=/products/**,/categories,/categories/**
         - id: order
           uri: ${ORDER_SVC_URI:http://localhost:8083}
           predicates:
-            - Path=/orders/**, /cart/**, /stats/**
+            - Path=/orders/**,/cart/**,/stats/**
         - id: leader
           uri: ${LEADER_SVC_URI:http://localhost:8084}
           predicates:
-            - Path=/leaders/**, /communities/**
+            - Path=/leaders/**,/communities/**
         - id: supplier
           uri: ${SUPPLIER_SVC_URI:http://localhost:8085}
           predicates:
-            - Path=/shipping/**, /suppliers/**
+            - Path=/shipping/**,/suppliers/**
         - id: admin
           uri: ${ADMIN_SVC_URI:http://localhost:8086}
           predicates:
