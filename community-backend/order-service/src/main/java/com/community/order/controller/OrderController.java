@@ -68,12 +68,16 @@ public class OrderController {
                               @RequestParam(required = false) Long addressId) {
         if (quantity == null || quantity <= 0) return ApiResponse.error("数量非法");
 
-        // 自动根据 address -> community -> leaderUserId 解析团长
+        // 自动根据地址 -> community -> leaderId（leader表主键）解析团长
         Long resolvedLeaderId = leaderId;
-        if (resolvedLeaderId == null && addressId != null) {
-            Long communityId = fetchCommunityIdFromAddress(userId, addressId);
+        Long communityId = null;
+        if (addressId != null) {
+            communityId = fetchCommunityIdFromAddress(userId, addressId);
             if (communityId != null) {
-                resolvedLeaderId = fetchLeaderUserIdByCommunity(communityId);
+                LeaderInfo info = fetchLeaderInfoByCommunity(communityId);
+                if (info != null && info.leaderId() != null) {
+                    resolvedLeaderId = info.leaderId();
+                }
             }
         }
         if (resolvedLeaderId == null) {
@@ -283,32 +287,37 @@ public class OrderController {
     }
 
     /**
-     * 根据 communityId 查询对应的团长用户ID（优先 leaderUserId）
+     * 根据 communityId 查询团长（leader 表主键 + 团长用户ID）
      */
-    private Long fetchLeaderUserIdByCommunity(Long communityId) {
+    private LeaderInfo fetchLeaderInfoByCommunity(Long communityId) {
         try {
             ApiResponse resp = leaderClient.get()
                     .uri(u -> u.path("/communities/{id}").build(communityId))
                     .retrieve()
                     .body(ApiResponse.class);
             if (resp == null || resp.getCode() != 0) return null;
-            Object leaderUserId = resp.get("leaderUserId");
-            if (leaderUserId == null) leaderUserId = resp.get("leaderId");
+            Long leaderId = toLong(resp.get("leaderId"));
+            Long leaderUserId = toLong(resp.get("leaderUserId"));
             Object communityObj = resp.get("community");
-            if (leaderUserId == null && communityObj instanceof Map<?, ?> communityMap) {
-                leaderUserId = communityMap.get("leaderUserId");
-                if (leaderUserId == null) leaderUserId = communityMap.get("leaderId");
+            if (leaderId == null && communityObj instanceof Map<?, ?> m) {
+                leaderId = toLong(m.get("leaderId"));
+            }
+            if (leaderUserId == null && communityObj instanceof Map<?, ?> m2) {
+                leaderUserId = toLong(m2.get("leaderUserId"));
             }
             Map<String, Object> data = resp.getData();
-            if (leaderUserId == null && data != null) {
-                if (data.get("leaderUserId") != null) leaderUserId = data.get("leaderUserId");
-                else leaderUserId = data.get("leaderId");
+            if (data != null) {
+                if (leaderId == null) leaderId = toLong(data.get("leaderId"));
+                if (leaderUserId == null) leaderUserId = toLong(data.get("leaderUserId"));
             }
-            return toLong(leaderUserId);
+            if (leaderId == null && leaderUserId == null) return null;
+            return new LeaderInfo(leaderId, leaderUserId);
         } catch (Exception ignored) {
             return null;
         }
     }
+
+    private record LeaderInfo(Long leaderId, Long leaderUserId) {}
 
     // 按团长查询订单（LEADER/ADMIN）
     @GetMapping("/by-leader")
