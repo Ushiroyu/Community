@@ -292,13 +292,17 @@ public class OrderController {
                     .retrieve()
                     .body(ApiResponse.class);
             if (resp == null || resp.getCode() != 0) return null;
-            Object leaderUserId = resp.getOrDefault("leaderUserId", resp.get("leaderId"));
-            if (leaderUserId == null && resp.get("community") instanceof Map<?, ?> map) {
-                leaderUserId = map.getOrDefault("leaderUserId", map.get("leaderId"));
+            Object leaderUserId = resp.get("leaderUserId");
+            if (leaderUserId == null) leaderUserId = resp.get("leaderId");
+            Object communityObj = resp.get("community");
+            if (leaderUserId == null && communityObj instanceof Map<?, ?> communityMap) {
+                leaderUserId = communityMap.get("leaderUserId");
+                if (leaderUserId == null) leaderUserId = communityMap.get("leaderId");
             }
             Map<String, Object> data = resp.getData();
             if (leaderUserId == null && data != null) {
-                leaderUserId = data.getOrDefault("leaderUserId", data.get("leaderId"));
+                if (data.get("leaderUserId") != null) leaderUserId = data.get("leaderUserId");
+                else leaderUserId = data.get("leaderId");
             }
             return toLong(leaderUserId);
         } catch (Exception ignored) {
