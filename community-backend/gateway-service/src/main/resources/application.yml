@@ -23,15 +23,10 @@ spring:
         add-to-simple-url-handler-mapping: true
         cors-configurations:
           '[/**]':
-            allowed-origin-patterns:
-              - "*"
-            allowed-origins:
-              - "*"
-            allowed-methods:
-              - "*"
-            allowed-headers:
-              - "*"
-            allow-credentials: false
+            allowed-origin-patterns: ["*"]
+            allowed-methods: ["*"]
+            allowed-headers: ["*"]
+            allow-credentials: true
       routes:
         - id: product-supplier-products
           uri: ${PRODUCT_SVC_URI:http://localhost:8082}

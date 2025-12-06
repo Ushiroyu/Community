@@ -38,7 +38,7 @@ http.interceptors.response.use(
     let msg = err?.message || '请求失败'
     try {
       const status = err?.response?.status
-      if (status === 401 || status === 403) {
+      if (status === 401) {
         try {
           // 清理本地会话并跳转登录
           localStorage.removeItem('token')
