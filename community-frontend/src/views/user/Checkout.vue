@@ -280,11 +280,7 @@ const submit = async () => {
   submitting.value = true
   try {
     const address = addresses.value.find((a) => a.id === addressId.value)
-    const leaderId = await fetchLeaderId(address?.communityId)
-    if (!leaderId) {
-      ElMessage.error('该地址没有绑定社区或团长')
-      return
-    }
+    const leaderId = await fetchLeaderId(address?.communityId) || null
 
     const orderIds = []
     for (const item of cartItems.value) {

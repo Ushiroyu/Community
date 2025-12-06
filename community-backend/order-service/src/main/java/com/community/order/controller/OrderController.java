@@ -34,6 +34,8 @@ public class OrderController {
     private final ShipmentService shipmentService;
     private final OrderItemMapper orderItemMapper;
     private final RestClient productClient;
+    private final RestClient userClient;
+    private final RestClient leaderClient;
     private final ObjectProvider<RabbitTemplate> rabbitProvider;
     private final OrderEventPublisher eventPublisher;
 
@@ -42,12 +44,16 @@ public class OrderController {
                            ShipmentService shipmentService,
                            OrderItemMapper orderItemMapper,
                            @Qualifier("productClient") RestClient productClient,
+                           @Qualifier("userClient") RestClient userClient,
+                           @Qualifier("leaderClient") RestClient leaderClient,
                            ObjectProvider<RabbitTemplate> rabbitProvider,
                            OrderEventPublisher eventPublisher) {
         this.orderService = orderService;
         this.shipmentService = shipmentService;
         this.orderItemMapper = orderItemMapper;
         this.productClient = productClient;
+        this.userClient = userClient;
+        this.leaderClient = leaderClient;
         this.rabbitProvider = rabbitProvider;
         this.eventPublisher = eventPublisher;
     }
@@ -56,11 +62,23 @@ public class OrderController {
     @PostMapping("/create")
     @PreAuthorize("isAuthenticated()")
     public ApiResponse create(@RequestParam Long userId,
-                              @RequestParam Long leaderId,
+                              @RequestParam(required = false) Long leaderId,
                               @RequestParam Long productId,
                               @RequestParam Integer quantity,
                               @RequestParam(required = false) Long addressId) {
         if (quantity == null || quantity <= 0) return ApiResponse.error("数量非法");
+
+        // 自动根据 address -> community -> leaderUserId 解析团长
+        Long resolvedLeaderId = leaderId;
+        if (resolvedLeaderId == null && addressId != null) {
+            Long communityId = fetchCommunityIdFromAddress(userId, addressId);
+            if (communityId != null) {
+                resolvedLeaderId = fetchLeaderUserIdByCommunity(communityId);
+            }
+        }
+        if (resolvedLeaderId == null) {
+            return ApiResponse.error("该地址没有绑定社区或团长");
+        }
 
         ApiResponse prodResp = productClient.get()
                 .uri(u -> u.path("/products/{id}").build(productId))
@@ -86,7 +104,7 @@ public class OrderController {
         Order o = new Order();
         o.setUserId(userId);
         // leaderId 这里保存团长用户ID，后续按用户ID查询
-        o.setLeaderId(leaderId);
+        o.setLeaderId(resolvedLeaderId);
         o.setSupplierId(supplierId);
         o.setAddressId(addressId);
         o.setAmount(price.multiply(BigDecimal.valueOf(quantity)));
@@ -237,6 +255,53 @@ public class OrderController {
         try {
             return new BigDecimal(String.valueOf(v));
         } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * 读取用户地址的 communityId（不存在或跨用户时返回 null）
+     */
+    private Long fetchCommunityIdFromAddress(Long userId, Long addressId) {
+        try {
+            ApiResponse addrResp = userClient.get()
+                    .uri(u -> u.path("/users/{uid}/addresses/{aid}").build(userId, addressId))
+                    .retrieve()
+                    .body(ApiResponse.class);
+            if (addrResp == null || addrResp.getCode() != 0) return null;
+            Object addrObj = addrResp.getOrDefault("address", addrResp.get("data"));
+            if (addrObj instanceof Map<?, ?> map) {
+                return toLong(map.get("communityId"));
+            }
+            Map<String, Object> data = addrResp.getData();
+            if (data != null && data.get("address") instanceof Map<?, ?> map2) {
+                return toLong(map2.get("communityId"));
+            }
+        } catch (Exception ignored) {
+        }
+        return null;
+    }
+
+    /**
+     * 根据 communityId 查询对应的团长用户ID（优先 leaderUserId）
+     */
+    private Long fetchLeaderUserIdByCommunity(Long communityId) {
+        try {
+            ApiResponse resp = leaderClient.get()
+                    .uri(u -> u.path("/communities/{id}").build(communityId))
+                    .retrieve()
+                    .body(ApiResponse.class);
+            if (resp == null || resp.getCode() != 0) return null;
+            Object leaderUserId = resp.getOrDefault("leaderUserId", resp.get("leaderId"));
+            if (leaderUserId == null && resp.get("community") instanceof Map<?, ?> map) {
+                leaderUserId = map.getOrDefault("leaderUserId", map.get("leaderId"));
+            }
+            Map<String, Object> data = resp.getData();
+            if (leaderUserId == null && data != null) {
+                leaderUserId = data.getOrDefault("leaderUserId", data.get("leaderId"));
+            }
+            return toLong(leaderUserId);
+        } catch (Exception ignored) {
             return null;
         }
     }
